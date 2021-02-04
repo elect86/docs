@@ -16,6 +16,8 @@ plugins {
     id("org.jetbrains.dokka") version "1.4.20"
 
     `kotlin-dsl`
+
+    `maven-publish` // Jitpack
 }
 
 repositories {
@@ -66,3 +68,8 @@ val check by tasks.getting(Task::class) {
     // Run the functional tests as part of `check`
     dependsOn(functionalTest)
 }
+
+publishing.publications.register("mavenJava", MavenPublication::class) {
+    from(components["java"])
+}
+
