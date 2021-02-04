@@ -46,7 +46,7 @@ dependencies {
 gradlePlugin {
     // Define the plugin
     val greeting by plugins.creating {
-        id = "docs.greeting"
+        id = "com.github.elect86.docs"
         implementationClass = "docs.DocsPlugin"
     }
 }
