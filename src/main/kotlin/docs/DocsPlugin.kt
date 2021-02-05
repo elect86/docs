@@ -23,21 +23,35 @@ class DocsPlugin : Plugin<Project> {
 
         project.tasks {
 
-            val netlifyBadge by registering {
+            fun modifyIndex(block: (String) -> String) {
+                val html = project.name + File.separatorChar + "index.html"
+                val index = dokkaHtml.get().outputDirectory.get().resolve(html)
+                val newText = block(index.readText())
+                index.writeText(newText)
+            }
 
+            // add the netlify badge in the lower right corner
+            val netlifyBadge by register("netlifyBadge") {
                 doLast {
-                    val index = dokkaHtml.get().outputDirectory.get()
-                        .resolve(project.name + File.separatorChar + "index.html")
-                    val text = index.readText()
-                    val ofs = text.lastIndexOf("</span>") + 7
-                    val badge = """
+                    modifyIndex { text ->
+                        val ofs = text.lastIndexOf("</span>") + 7
+                        val badge = """
                           <a href="https://www.netlify.com">
                             <img src="https://www.netlify.com/img/global/badges/netlify-color-accent.svg" alt="Deploys by Netlify" style="vertical-align:middle;margin:10px 10px" />
                           </a>
                         """.trimIndent()
-                    index.writeText(text.replaceRange(ofs, ofs, badge))
+                        text.replaceRange(ofs, ofs, badge)
+                    }
                 }
             }
+
+//            val githubCorner by register("githubCorner") {
+//                doLast {
+//                    modifyIndex { text ->
+//
+//                    }
+//                }
+//            }
 
             dokkaHtml {
                 dokkaSourceSets.configureEach {
